@@ -15,7 +15,7 @@ Therefore, to compile this project, you need to download the following component
 * [Library](https://github.com/lpierge/Library) — Shared source (.c/.cpp) files
 * [zLibDll](https://github.com/lpierge/zLibDll) — Modified zLib DLL project
 
-Regarding the the source code, most of it is specific to the _Windows platform_. Even if most of the source files are _.cpp_ files, the source code is mainly C code with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_.
+Regarding the source code, most of it is specific to the _Windows platform_. Even if most of the source files are _.cpp_ files, the source code is mainly C code with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_.
 
 **Important note on project structure:**
 The Visual Studio projects for dtcopy and zLibDll are hardcoded to search for dependencies using absolute paths starting from the root of a virtual L: drive. The expected directory structure is as follows:
