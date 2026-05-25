@@ -20,12 +20,12 @@ Regarding the the source code, most of it is specific to the _Windows platform_.
 **Important note on project structure:**
 The Visual Studio projects for dtcopy and zLibDll are hardcoded to search for dependencies using absolute paths starting from the root of a virtual L: drive. The expected directory structure is as follows:
 
-`L:\`
-`  |-- Include\`
-`  |-- Library\`
-`  |-- dtcopy\`
-`  |-- zLibDll\`
- 
+L:\
+  |-- Include\
+  |-- Library\
+  |-- dtcopy\
+  |-- zLibDll\
+   
 If you want to compile the projects without reconfiguring the Visual Studio settings, you can map a local folder to a virtual L: drive using the Windows SUBST command:
 Create a directory on your local drive (for example, C:\DEV).
 Download and extract all four repositories inside that directory.
