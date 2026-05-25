@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{9403e3bd-27ce-4a1b-a257-b2054b472959}</ProjectGuid>
+    <RootNamespace>dtcopy</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);L:\Include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);L:\Lib;</LibraryPath>
+    <OutDir>.\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);L:\Include;</IncludePath>
+    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);L:\Lib;</LibraryPath>
+    <OutDir>.\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>\zLibdll\include</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>\zLibdll\include</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Library\algorithm.c" />
+    <ClCompile Include="..\Library\CBinFile.cpp" />
+    <ClCompile Include="..\Library\CDateTime.cpp" />
+    <ClCompile Include="..\Library\CFifoLifo.cpp" />
+    <ClCompile Include="..\Library\CFilenameFactory.cpp" />
+    <ClCompile Include="..\Library\CFindFile.cpp" />
+    <ClCompile Include="..\Library\CGzw.cpp" />
+    <ClCompile Include="..\Library\CNodeList.cpp" />
+    <ClCompile Include="..\Library\CRegistry.cpp" />
+    <ClCompile Include="..\Library\CRegKey.cpp" />
+    <ClCompile Include="..\Library\CSync.cpp" />
+    <ClCompile Include="..\Library\CWildCards.cpp" />
+    <ClCompile Include="..\Library\CWindowsVersion.cpp" />
+    <ClCompile Include="..\Library\Date.cpp" />
+    <ClCompile Include="..\Library\datetime.c" />
+    <ClCompile Include="..\Library\getopt.c" />
+    <ClCompile Include="..\Library\strings.c" />
+    <ClCompile Include="..\Library\traceexpr.c" />
+    <ClCompile Include="..\Library\win32api.c" />
+    <ClCompile Include="dtcopy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Include\algorithm.h" />
+    <ClInclude Include="..\Include\CBinFile.h" />
+    <ClInclude Include="..\Include\CDateTime.h" />
+    <ClInclude Include="..\Include\CFifoLifo.h" />
+    <ClInclude Include="..\Include\CFilenameFactory.h" />
+    <ClInclude Include="..\Include\CFindFile.h" />
+    <ClInclude Include="..\Include\CGzw.h" />
+    <ClInclude Include="..\Include\CNodeList.h" />
+    <ClInclude Include="..\Include\CRegistry.h" />
+    <ClInclude Include="..\Include\CRegKey.h" />
+    <ClInclude Include="..\Include\CSync.h" />
+    <ClInclude Include="..\Include\CWildCards.h" />
+    <ClInclude Include="..\Include\CWindowsVersion.h" />
+    <ClInclude Include="..\Include\CzLib.h" />
+    <ClInclude Include="..\Include\Date.h" />
+    <ClInclude Include="..\Include\datetime.h" />
+    <ClInclude Include="..\Include\env.h" />
+    <ClInclude Include="..\Include\getopt.h" />
+    <ClInclude Include="..\Include\macro.h" />
+    <ClInclude Include="..\Include\pragma.h" />
+    <ClInclude Include="..\Include\strings.h" />
+    <ClInclude Include="..\Include\traceexpr.h" />
+    <ClInclude Include="..\Include\typedef.h" />
+    <ClInclude Include="..\Include\typeval.h" />
+    <ClInclude Include="..\Include\versioning.h" />
+    <ClInclude Include="..\Include\win32api.h" />
+    <ClInclude Include="..\Include\window.h" />
+    <ClInclude Include="..\zLibdll\include\gzwhdr.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="dtcopy.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Ta Da!.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\dtcopy.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
