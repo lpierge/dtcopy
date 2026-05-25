@@ -20,7 +20,7 @@ Regarding the the source code, most of it is specific to the _Windows platform_.
 **Important note on project structure:**
 The Visual Studio projects for dtcopy and zLibDll are hardcoded to search for dependencies using absolute paths starting from the root of a virtual L: drive. The expected directory structure is as follows:
 
-```
+```text
 L:\
   |-- Include\
   |-- Library\
