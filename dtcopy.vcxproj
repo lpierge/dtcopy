@@ -104,8 +104,10 @@
     <ClCompile Include="..\Library\CSync.cpp" />
     <ClCompile Include="..\Library\CWildCards.cpp" />
     <ClCompile Include="..\Library\CWindowsVersion.cpp" />
+    <ClCompile Include="..\Library\CWindowsXPTheme.cpp" />
     <ClCompile Include="..\Library\Date.cpp" />
     <ClCompile Include="..\Library\datetime.c" />
+    <ClCompile Include="..\Library\fastrand.c" />
     <ClCompile Include="..\Library\getopt.c" />
     <ClCompile Include="..\Library\strings.c" />
     <ClCompile Include="..\Library\traceexpr.c" />
@@ -126,10 +128,12 @@
     <ClInclude Include="..\Include\CSync.h" />
     <ClInclude Include="..\Include\CWildCards.h" />
     <ClInclude Include="..\Include\CWindowsVersion.h" />
+    <ClInclude Include="..\Include\CWindowsXPTheme.h" />
     <ClInclude Include="..\Include\CzLib.h" />
     <ClInclude Include="..\Include\Date.h" />
     <ClInclude Include="..\Include\datetime.h" />
     <ClInclude Include="..\Include\env.h" />
+    <ClInclude Include="..\Include\fastrand.h" />
     <ClInclude Include="..\Include\getopt.h" />
     <ClInclude Include="..\Include\macro.h" />
     <ClInclude Include="..\Include\pragma.h" />
