@@ -17,7 +17,7 @@ Source files that are not part of the core **dtcopy** project but are used by it
 * [Library](https://github.com/lpierge/Library) — Shared source (.c/.cpp) files
 * [zLibDll](https://github.com/lpierge/zLibDll) — Modified zLib DLL project
 
-Regarding the source code, most of it is specific to the _Windows platform_. Even if most of the source files are _.cpp_ files, the source code is mainly C code with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_.
+Regarding the source code, even if most of the source files are named with the _.cpp_ extension, the source code is mainly C code with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_ (usage of basic object-oriented concepts like classes, inheritance, polymorphism, but no modern C++ features like STL, templates, namespaces, etc.).
 
 **Important note on projects structure:**
 
