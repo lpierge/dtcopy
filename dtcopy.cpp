@@ -59,13 +59,12 @@ int main(int argc,char* argv[])
 	}
 	
 	printf(	"dtcopy v2.7.0 (compiled %s)\n"\
-			"Date/Time-Conditional Directory Copy.\n"\
-			"A command-line utility for timestamp-conditional directory\n"\
-			"copies, with optional compressed (.gzw) versioning support.\n"\
-			"Written by Luca P., released as freeware.\n"\
-			"Source code available at: https://github.com/lpierge\n"\
-			"GZW format is based on the zLib version 1.1.3\n"\
+			"Date/Time conditional directory copy.\n"\
+			"A command-line utility for timestamp-conditional directory copies, with optional compressed (.gzw) versioning support.\n"\
+			"Written by LPI.\n"\
+			"GZW format is based on the zLib version 1.1.3.\n"\
 			"zLib is copyright (C) 1995-1998 by Jean-loup Gailly and Mark Adler.\n"\
+			"Project hosted at: https://github.com/lpierge/dtcopy\n"
 			"\n",
 			__DATE__
 			);
@@ -165,7 +164,8 @@ int main(int argc,char* argv[])
 				"<-s<input>>           source directory\n\t"\
 				"<-d<output>>          destination directory\n\t"\
 				"[-r]                  copy recursively\n\t"\
-				"[-q<date|current>]    quick copy only modified files since <dd/mm/yyyy>, no check against destination\n\t"\
+				"[-q<date|current>]    quick copy only modified files since <date> (in dd/mm/yyyy format), no check against destination\n\t"\
+				"                      use \"current\" to use the current date\n\t"\
 				"[-x<exclusions>]      skeleton/pattern for file/dir exclusions, items separated by ;\n\t"\
 				"[-X]                  show excluded file/dir\n\t"\
 				"[-f]                  match the skeleton/pattern with the file name only (default)\n\t"\
