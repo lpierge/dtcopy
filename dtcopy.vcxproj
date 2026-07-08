@@ -141,11 +141,12 @@
     <ClInclude Include="..\Include\traceexpr.h" />
     <ClInclude Include="..\Include\typedef.h" />
     <ClInclude Include="..\Include\typeval.h" />
-    <ClInclude Include="..\Include\versioning.h" />
     <ClInclude Include="..\Include\win32api.h" />
     <ClInclude Include="..\Include\window.h" />
     <ClInclude Include="..\zLibdll\include\gzwhdr.h" />
+    <ClInclude Include="L:\Include\versioning.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="dtcopy.rc" />

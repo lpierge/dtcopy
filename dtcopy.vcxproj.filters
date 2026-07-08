@@ -152,9 +152,6 @@
     <ClInclude Include="..\Include\CFilenameFactory.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="..\Include\versioning.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="..\Include\algorithm.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -174,6 +171,12 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="..\Include\CWindowsXPTheme.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="L:\Include\versioning.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
