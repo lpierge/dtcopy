@@ -17,7 +17,13 @@ Source files that are not part of the core **dtcopy** project but are used by it
 * [Library](https://github.com/lpierge/Library) — Shared source (.c/.cpp) files
 * [zLibDll](https://github.com/lpierge/zLibDll) — Modified zLib DLL project
 
-Regarding the source code, even if most of the source files are named with the _.cpp_ extension, the source code is mainly C code with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_ (usage of basic object-oriented concepts like classes, inheritance, polymorphism, but no modern C++ features like STL, templates, namespaces, etc.).
+**Implementation notes:**
+
+This is a personal project. I wrote it for my own use to back up files on my laptop, and since I don't need Unicode support, the program only supports ANSI mode, not Wide (Unicode) mode.
+
+The main reason the project targets x86 only (no x64 configuration) is that it uses an external DLL (zLibDll) for data compression, which is compiled for x86.
+
+About the source code, even if most of the source files are named with the _.cpp_ extension, the code is mainly C code, with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_ (usage of basic object-oriented concepts like classes, inheritance, polymorphism, but no modern C++ features like STL, templates, namespaces, etc.).
 
 **Important note on projects structure:**
 
