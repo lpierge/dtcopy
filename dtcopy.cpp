@@ -31,6 +31,8 @@
   #pragma message("\t\t\t"__FILE__"("STR(__LINE__)"): automatically linking with WinMM")
 #endif
 
+#define DTCOPY_PROJECT_HOME "https://github.com/lpierge/dtcopy"
+
 /*
 	prototipi
 */
@@ -50,6 +52,8 @@ BOOL g_bInterrupted = FALSE;
 */
 int main(int argc,char* argv[])
 {
+	InitConsoleGeometry(120,9000);
+
 	// imposta l'handler per il Ctrl+C
 	if(!SetConsoleCtrlHandler(CtrlHandler,TRUE))
 	{
@@ -58,15 +62,16 @@ int main(int argc,char* argv[])
 		return(1);
 	}
 	
-	printf(	"dtcopy v2.7.0 (compiled %s)\n"\
+	printf(	"dtcopy v2.7.1 (compiled %s)\n"\
 			"Date/Time conditional directory copy.\n"\
 			"A command-line utility for timestamp-conditional directory copies, with optional compressed (.gzw) versioning support.\n"\
 			"Written by LPI.\n"\
 			"GZW format is based on the zLib version 1.1.3.\n"\
 			"zLib is copyright (C) 1995-1998 by Jean-loup Gailly and Mark Adler.\n"\
-			"Project hosted at: https://github.com/lpierge/dtcopy\n"
+			"Project hosted at %s\n"
 			"\n",
-			__DATE__
+			__DATE__,
+			DTCOPY_PROJECT_HOME
 			);
 
 	// opzioni da linea di comando   

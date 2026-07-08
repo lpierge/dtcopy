@@ -63,7 +63,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\zLibdll\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>L:\zLibdll\include</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -81,7 +81,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>\zLibdll\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>L:\zLibdll\include</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <StructMemberAlignment>Default</StructMemberAlignment>
     </ClCompile>

@@ -47,6 +47,9 @@ Open the Windows Command Prompt (cmd) and run the following command:
 **Binaries for Windows:**
 
 The **Installer** directory of this repository contains a simple Installer with the compiled binaries for the Windows environment (dtcopy.exe and zLibDll.dll).
+
 When running the Installer, if you get the "Windows protected your PC" JOKE, do not worry, it's a default Microsoft Defender SmartScreen feature that blocks unrecognized apps. To bypass it, click the "More info" link in the pop-up, then click "Run anyway". dtcopy is a program I wrote, NOT a virus :) so you can safely say Yes to the next Windows screen asking for authorization.
+
+The **redist** subdirectory of the **dtcopy** repository contains the `dtcopy.iss` script file used to create the Installer. The file is provided as a basic example to help you create an installer using the [Inno Setup](https://jrsoftware.org/isinfo.php) program
 
 Luca P.
