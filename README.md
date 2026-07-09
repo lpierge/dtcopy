@@ -22,7 +22,7 @@ This is a personal project. I wrote it for my own use to backup files on my lapt
 
 The main reason the project targets x86 only (no x64 configuration) is that it uses an external DLL (zLibDll) for data compression, which is compiled for x86.
 
-About the source code, even if most of the source files are named with the _.cpp_ extension, the code is mainly C code, with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_ (usage of basic object-oriented concepts like classes, inheritance, polymorphism, but no modern C++ features like STL, templates, namespaces, etc.).
+About the source code, even if most of the source files are named with the _.cpp_ extension, the code is mainly C, with a minimal use of basic C++ features, which is commonly labeled as _"C with classes"_ (usage of basic object-oriented concepts like classes, inheritance, polymorphism, but no modern C++ features like STL, templates, namespaces, etc.).
 
 **Important note on projects structure:**
 
@@ -37,14 +37,14 @@ L:\
   |-- Lib\
 ```
 
-The L:\Lib directory must be created manually because it is the directory where the output zLibDll DLL will be copied and where the dtcopy project looks for libraries and DLLs to compile and link.
+The L:\Lib directory must be created manually. This is the directory where the output zLibDll DLL will be copied and where the dtcopy project looks for libraries and DLLs to compile and link.
 
 Instead of changing the Visual Studio settings in the project file, I recommend mapping a local folder to a virtual L: drive with the Windows SUBST command:
-- Create a directory on your local drive, for example, `C:\DEV`.
+- Create a directory on your local drive, for example `C:\DEV`.
 - Download and extract all the repositories inside that directory.
 - Open the Windows Command Prompt (press `Win + R` to open the Run dialog, type `cmd.exe` and press `Enter`) and from the Console run the following command: `SUBST L: C:\DEV`
 
-## Windows Binaries and Installer
+## Windows binaries and Installer
 The **Installer** directory of this repository contains a simple Installer with the compiled binaries for the Windows environment (`dtcopy.exe` and `zLibDll.dll`).
 
 When running the Installer, if you get the _"Windows protected your PC"_ JOKE, do not worry, it's a default Microsoft Defender SmartScreen feature that blocks unrecognized apps. To bypass it, click the _"More info"_ link in the pop-up, then click _"Run anyway"_. dtcopy is a program I wrote, NOT a virus :) so you can safely say _"Yes"_ to the next Windows screen asking for authorization.
