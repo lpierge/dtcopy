@@ -14,7 +14,7 @@
 */
 #define MAJOR_VERSION	2
 #define MINOR_VERSION	7
-#define PATCH_VERSION	2
+#define PATCH_VERSION	5
 #define RELEASE_VERSION	0
 #define RELEASE_TYPE	"" /*"(beta)"*/
 

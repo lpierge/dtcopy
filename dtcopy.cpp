@@ -19,8 +19,7 @@
 #include "CFindFile.h"
 #include "CSync.h"
 #include "CFifoLifo.h"
-#include "version.h"
-#include "versioning.h"
+#include "L:/dtcopy/version.h"
 
 // per SH...()
 #include <shlobj.h>
@@ -54,7 +53,11 @@ BOOL g_bInterrupted = FALSE;
 */
 int main(int argc,char* argv[])
 {
-	InitConsoleGeometry(120,9000);
+	InitConsoleGeometry(1024,10240);
+
+	HWND hConsole = GetConsoleWindow();
+	ShowWindow(hConsole,SW_MAXIMIZE);
+	SetForegroundWindow(hConsole);
 
 	// imposta l'handler per il Ctrl+C
 	if(!SetConsoleCtrlHandler(CtrlHandler,TRUE))
@@ -70,7 +73,7 @@ int main(int argc,char* argv[])
 			"Written by LPI.\n"\
 			"GZW format is based on the zLib version 1.1.3.\n"\
 			"zLib is copyright (C) 1995-1998 by Jean-loup Gailly and Mark Adler.\n"\
-			"Project hosted at %s\n"
+			"Project hosted at %s\n"\
 			"\n",
 			VER_STR_PROGRAM_NAME,
 			MAJOR_VERSION,
@@ -528,9 +531,11 @@ int main(int argc,char* argv[])
     int nExcludedFiles = 0;
 	int nUnchangedFiles = 0;
 
-    printf("copying newer files from %s to %s\n",lpcszInputDir,lpcszOutputDir);
+	printf("copying newer files from %s to %s",lpcszInputDir,lpcszOutputDir);
 	if(bQuickMode)
-	    printf("matching (>=) %d/%d/%d date\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
+	    printf(", with a timestamp (dd/mm/yyyy) >= %d/%d/%d\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
+	else
+	    printf("\n");
 	printf("exclusions: ");
 	if(pitemListExl)
 	{
@@ -606,8 +611,10 @@ int main(int argc,char* argv[])
 		}
 	}
 
+#ifndef DEBUG
 	// Ta Da!
 	PlayEmbeddedWave(IDR_WAVE1);
+#endif
 
 /*- VERSIONAMENTO ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -862,7 +869,7 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 		{
 			BOOL bDoCopyFile= FALSE;
 			if(tQuickMode==True)
-				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTime);		// confronta la data del file (sorgente) con quella specificata in input via -q
+				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTime) >= 0;	// confronta la data del file (sorgente) con quella specificata in input via -q
 			else
 				bDoCopyFile = CompareFileTimebyName(szSrcPath,szDstPath);	// confronta la data/ora del file (sorgente) con quella del file di destinazione
 
