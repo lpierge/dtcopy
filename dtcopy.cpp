@@ -55,15 +55,15 @@ int main(int argc,char* argv[])
 {
 	InitConsoleGeometry(1024,10240);
 
-	HWND hConsole = GetConsoleWindow();
-	ShowWindow(hConsole,SW_MAXIMIZE);
-	SetForegroundWindow(hConsole);
+	HWND hConsole = ::GetConsoleWindow();
+	::ShowWindow(hConsole,SW_MAXIMIZE);
+	::SetForegroundWindow(hConsole);
 
 	// imposta l'handler per il Ctrl+C
 	if(!SetConsoleCtrlHandler(CtrlHandler,TRUE))
 	{
 		printf("error: %ld, unable to set the Ctrl+C handler\n",GetLastError());
-		Beep(1000,300);
+		::Beep(1000,300);
 		return(1);
 	}
 	
@@ -774,7 +774,7 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 			systemTime.wMonth = dateTime.GetMonth();
 			systemTime.wYear = dateTime.GetYear();
 		}
-		SystemTimeToFileTime(&systemTime,&fileTime);
+		::SystemTimeToFileTime(&systemTime,&fileTime);
 	}
 
 	// per tenere traccia di eventuali errori
@@ -798,7 +798,7 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 	if(hFind==INVALID_HANDLE_VALUE)
 	{
 		dwRet = ERROR_FILE_NOT_FOUND;
-		SetLastError(dwRet);
+		::SetLastError(dwRet);
 		return(dwRet);
 	}
 
@@ -869,9 +869,17 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 		{
 			BOOL bDoCopyFile= FALSE;
 			if(tQuickMode==True)
-				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTime) >= 0;	// confronta la data del file (sorgente) con quella specificata in input via -q
+			{
+				// confronta la data del file (sorgente) con quella specificata in input (-q)
+				// copia per timestamp maggiore o uguale
+				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTime) >= 0;
+			}
 			else
-				bDoCopyFile = CompareFileTimebyName(szSrcPath,szDstPath);	// confronta la data/ora del file (sorgente) con quella del file di destinazione
+			{
+				// confronta la data/ora del file (sorgente) con quella del file di destinazione
+				// copia solo per timestamp maggiore
+				bDoCopyFile = CompareFileTimebyName(szSrcPath,szDstPath);
+			}
 
 			if(bDoCopyFile)
 			{
@@ -891,7 +899,7 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 
 						if((dwError = CopyFile(szSrcPath,szDstPath,FALSE))==0L) // copia il file a dimensione 0
 						{
-							dwRet = GetLastError();
+							dwRet = ::GetLastError();
 							printf("\r%*s\r",wide+1," ");
 							wide = printf("\rerror while copying: %s (%lu)\n",szSrcPath,dwRet);
 						}
@@ -912,15 +920,16 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 		}
 
 		// evita il sovraccarico del sistema
-		::Yield();
+		Yield();
 
     } while(!g_bInterrupted && ::FindNextFile(hFind,&findData));
 
-    FindClose(hFind);
+    ::FindClose(hFind);
 
 	dwTot = nTotFiles;
 
-	SetLastError(dwRet);
+	::SetLastError(dwRet);
+
 	return(dwRet);
 }
 
