@@ -32,12 +32,17 @@
   #pragma message("\t\t\t"__FILE__"("STR(__LINE__)"): automatically linking with WinMM")
 #endif
 
+// repository
 #define DTCOPY_PROJECT_HOME "https://github.com/lpierge/dtcopy"
+
+// azioni
+#define DTCOPY_COPY 1
+#define DTCOPY_LIST 2
 
 /*
 	prototipi
 */
-DWORD		CopyDirectory			(LPCSTR lpcszSrcDir,LPCSTR lpcsDstDir,BOOL bRecursiveyCopy,CWildCards* pWildCards,BOOL bMatchWhole,int& nCopiedFiles,int& nUnchangedFiles,int& nExcludedFiles,BOOL bShowExcluded,CDateTime& dateTime,DWORD& dwTot);
+DWORD		DTCopy					(int nAction,LPCSTR lpcszSrcDir,LPCSTR lpcsDstDir,BOOL bRecursiveyCopy,CWildCards* pWildCards,BOOL bMatchWhole,int& nCopiedFiles,int& nUnchangedFiles,int& nExcludedFiles,BOOL bShowExcluded,CDateTime& dateTime,DWORD& dwTot);
 bool		DoesMatchWithPatterns	(const char* name,CWildCards* pWildCards);
 void		PlayEmbeddedWave		(UINT nResourceID);
 LONG		GzwCallback				(WPARAM wParam,LPARAM lParam1,LPARAM lParam2,LPARAM lParam3);
@@ -87,23 +92,25 @@ int main(int argc,char* argv[])
     #define GETOPT_s    0			// <-s<directory>>		source directory
     #define GETOPT_d    1			// <-d<directory>>		destination directory
     #define GETOPT_r    2			// [-r]					copy recursively
-	#define GETOPT_q    3			// [-q<date|current>]	quick copy only modified files since [dd/mm/yyyy], no check against destination
-    #define GETOPT_x    4			// [-x<exclusions>]		exclude list, items separated by ;
-    #define GETOPT_X    5			// [-X]					show exclusions
-    #define GETOPT_f	6			// [-f]					match wildcards with the filename
-    #define GETOPT_F	7			// [-F]					match wildcards with the full path
-    #define GETOPT_y    8			// [-y<exclusions>]		exclude list for the gzw api, items separated by ; if none -x will be used
-    #define GETOPT_v    9			// [-v[version]]		version number for the compressed copy of the source directory
-    #define GETOPT_V    10			// [-V<directories>]	make a compressed copy of the additional directories, separated by ;
-    #define GETOPT_l    11			// [-l<gzwfile>]		list the .gzw file content
-    #define GETOPT_g    12			// [-g<gzwfile>]		extract the .gzw file to the destination (-d<...>) directory
-    #define GETOPT_h    13			// [-h]					show help
+	#define GETOPT_q    3			// [-q<date>]			quick copy only modified files since dd/mm/yyyy, no check against destination timestamp
+	#define GETOPT_Q    4			// [-Q<date>]			quick list modified files since dd/mm/yyyy
+    #define GETOPT_x    5			// [-x<exclusions>]		exclude list, items separated by ;
+    #define GETOPT_X    6			// [-X]					show exclusions
+    #define GETOPT_f	7			// [-f]					match wildcards with the filename
+    #define GETOPT_F	8			// [-F]					match wildcards with the full path
+    #define GETOPT_y    9			// [-y<exclusions>]		exclude list for the gzw api, items separated by ; if none -x will be used
+    #define GETOPT_v    10			// [-v[version]]		version number for the compressed copy of the source directory
+    #define GETOPT_V    11			// [-V<directories>]	make a compressed copy of the additional directories, separated by ;
+    #define GETOPT_l    12			// [-l<gzwfile>]		list the .gzw file content
+    #define GETOPT_g    13			// [-g<gzwfile>]		extract the .gzw file to the destination (-d<...>) directory
+    #define GETOPT_h    14			// [-h]					show help
 
     GETOPT opts[] = {
 	{'s',0,1,string_type},
 	{'d',0,1,string_type},
 	{'r',0,0,chr_type},
 	{'q',0,1,string_type},
+	{'Q',0,1,string_type},
 	{'x',0,1,string_type},
 	{'X',0,0,chr_type},
 	{'f',0,0,chr_type},
@@ -178,8 +185,9 @@ int main(int argc,char* argv[])
 				"<-s<input>>           source directory\n\t"\
 				"<-d<output>>          destination directory\n\t"\
 				"[-r]                  copy recursively\n\t"\
-				"[-q<date|current>]    quick copy only modified files since <date> (in dd/mm/yyyy format), no check against destination\n\t"\
-				"                      use \"current\" to use the current date\n\t"\
+				"[-q<date>]            quick copy only modified files since dd/mm/yyyy(*), no check against destination timestamp\n\t"\
+				"[-Q<date>]            quick list modified files since dd/mm/yyyy(*)\n\t"\
+				"                      (*) use \"current\" to use the current date\n\t"\
 				"[-x<exclusions>]      skeleton/pattern for file/dir exclusions, items separated by ;\n\t"\
 				"[-X]                  show excluded file/dir\n\t"\
 				"[-f]                  match the skeleton/pattern with the file name only (default)\n\t"\
@@ -337,7 +345,7 @@ int main(int argc,char* argv[])
 
 	// -s<...>
 	// directory sorgente, se viene specificato -l/-g (lista/estrazione .gzw) la ignora
-	// in ogni caso, -l/-g terminano prima di arrivare qui
+	// in ogni caso, -l/-g terminano prima di arrivare qui, vedi sopra
 	if(!opts[GETOPT_l].bFound && !opts[GETOPT_g].bFound)
 	{
 		if(opts[GETOPT_s].bFound)
@@ -369,51 +377,55 @@ int main(int argc,char* argv[])
 
 	// -d<...>
 	// directory di destinazione, dove copiare i files o estrarre il .gzw
-    if(opts[GETOPT_d].bFound)
-    {
-		if(!*opts[GETOPT_d].uValue.szValue)
-		{
-			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_d].cOpt);
-	        return(1);
-		}
-    }
-	else
+	// se viene specificato -Q (lista) la ignora
+	if(!opts[GETOPT_Q].bFound)
 	{
-		printf("error: you must specify a destination directory for the copy\n");
-        return(1);
-	}
-	// normalizza la directory di destinazione, NON deve terminare con '\'
-	i = strlen(opts[GETOPT_d].uValue.szValue)-1;
-	if(opts[GETOPT_d].uValue.szValue[i]=='\\')
-		opts[GETOPT_d].uValue.szValue[i] = '\0';
-	// crea la directory di destinazione
-    lpcszOutputDir = opts[GETOPT_d].uValue.szValue;
-	DWORD dwError = 0L;
-	if(!DoesDirectoryExist(lpcszOutputDir,&dwError))
-	{
-		if(!CreatePathname(lpcszOutputDir,&dwError))
+		if(opts[GETOPT_d].bFound)
 		{
-			printf("unable to create destination directory %s\n",lpcszOutputDir);
-			return(1);
+			if(!*opts[GETOPT_d].uValue.szValue)
+			{
+				printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_d].cOpt);
+				return(1);
+			}
 		}
 		else
 		{
-			if(dwError!=ERROR_ALREADY_EXISTS)
-				printf("directory created %s\n",lpcszOutputDir);
+			printf("error: you must specify a destination directory for the copy\n");
+			return(1);
+		}
+		// normalizza la directory di destinazione, NON deve terminare con '\'
+		i = strlen(opts[GETOPT_d].uValue.szValue)-1;
+		if(opts[GETOPT_d].uValue.szValue[i]=='\\')
+			opts[GETOPT_d].uValue.szValue[i] = '\0';
+		// crea la directory di destinazione
+		lpcszOutputDir = opts[GETOPT_d].uValue.szValue;
+		DWORD dwError = 0L;
+		if(!DoesDirectoryExist(lpcszOutputDir,&dwError))
+		{
+			if(!CreatePathname(lpcszOutputDir,&dwError))
+			{
+				printf("unable to create destination directory %s\n",lpcszOutputDir);
+				return(1);
+			}
+			else
+			{
+				if(dwError!=ERROR_ALREADY_EXISTS)
+					printf("directory created %s\n",lpcszOutputDir);
+			}
 		}
 	}
 
 	// -r
-	// copia ricorsiva
+	// ricorsivamente
 	BOOL bRecursiveyCopy = FALSE;
 	if(opts[GETOPT_r].bFound)
 		bRecursiveyCopy = TRUE;
     
 	// -x<...>
-	// esclusioni per la copia, per specificare piu' di un pattern, separarlo con ;
-	// tenere a mente che se si esclude una dir (es. Debug), il programma riportera' solo 1 esclusione, pero'
-	// di fatto tutti i file contenuti in essa non verranno presi in considerazione (*.obj, *.exe, etc.), quindi 
-	// il totale reale delle esclusioni sara' maggiore
+	// esclusioni, per specificare piu' di un pattern, separarlo con ;
+	// tenere a mente che se si esclude una dir (es. Debug), il programma riportera' solo 1 esclusione, pero' di
+	// fatto tutti i file contenuti in essa non verranno presi in considerazione (*.obj, *.exe, etc.), quindi il
+	// totale reale delle esclusioni sara' maggiore
     if(opts[GETOPT_x].bFound)
 	{
 		if(!*opts[GETOPT_x].uValue.szValue)
@@ -427,10 +439,9 @@ int main(int argc,char* argv[])
 		}
 	}
     
-	// -q[dd/mm/yy|current]
-	// solo copia i files modificati a partire dalla data specificata, nel formato dd/mm/yy
-	// se la data viene omessa, assume quella corrente
-	BOOL bQuickMode = FALSE;
+	// -q<dd/mm/yy|current>
+	// solo copia i files modificati a partire dalla data specificata (nel formato dd/mm/yy) o corrente
+	BOOL bQuickCopy = FALSE;
     if(opts[GETOPT_q].bFound)
 	{
 		if(*opts[GETOPT_q].uValue.szValue)
@@ -438,9 +449,9 @@ int main(int argc,char* argv[])
 			int day,month,year;
 			if(strcmp(opts[GETOPT_q].uValue.szValue,"current")==0)
 			{
-				day = dateTime.GetDay();
+				day   = dateTime.GetDay();
 				month = dateTime.GetMonth();
-				year = dateTime.GetYear();
+				year  = dateTime.GetYear();
 			}
 			else
 			{
@@ -455,7 +466,7 @@ int main(int argc,char* argv[])
 					printf("error: wrong date format, assuming today (%d/%d/%d)\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
 				}
 			}
-			bQuickMode = TRUE;
+			bQuickCopy = TRUE;
 		}
 		else
 		{
@@ -463,9 +474,42 @@ int main(int argc,char* argv[])
 		    return(1);
 		}
 	}
-	else
-		dateTime.SetDate(-1,26,8,1965);
-		
+    
+	// -Q<dd/mm/yy|current>
+	// elenca i files modificati a partire dalla data specificata (nel formato dd/mm/yy) o corrente
+	BOOL bQuickList = FALSE;
+    if(opts[GETOPT_Q].bFound)
+	{
+		if(*opts[GETOPT_Q].uValue.szValue)
+		{
+			int day,month,year;
+			if(strcmp(opts[GETOPT_Q].uValue.szValue,"current")==0)
+			{
+				day   = dateTime.GetDay();
+				month = dateTime.GetMonth();
+				year  = dateTime.GetYear();
+			}
+			else
+			{
+    			if(sscanf(opts[GETOPT_Q].uValue.szValue,"%d/%d/%d",&day,&month,&year)==3)
+				{
+					if(year < 99)
+						year += 2000;
+					dateTime.SetDate(-1,day,month,year);
+				}
+				else
+				{
+					printf("error: wrong date format, assuming today (%d/%d/%d)\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
+				}
+			}
+			bQuickList = TRUE;
+		}
+		else
+		{
+			printf("error: you must specify a valid date for the listing\n");
+		    return(1);
+		}
+	}
 
 	// -X
 	// visualizza le esclusioni
@@ -473,10 +517,10 @@ int main(int argc,char* argv[])
 	if(opts[GETOPT_X].bFound)
 		bShowExcluded = TRUE;
 
-	// -f match filename
+	// -f match con il nome file
 	if(opts[GETOPT_f].bFound)
 		bMatchWhole = FALSE;
-	// -F match path
+	// -F match con il path
 	if(opts[GETOPT_F].bFound)
 		bMatchWhole = TRUE;
 
@@ -524,18 +568,27 @@ int main(int argc,char* argv[])
 			strcpyn(szDirectoriesToBeVersioned,opts[GETOPT_V].uValue.szValue,sizeof(szDirectoriesToBeVersioned));
 	}
 
-/*- COPIA ------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/*- COPIA/LISTA-------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
-    // effettua la copia
     int nCopiedFiles = 0;
     int nExcludedFiles = 0;
 	int nUnchangedFiles = 0;
 
-	printf("copying newer files from %s to %s",lpcszInputDir,lpcszOutputDir);
-	if(bQuickMode)
-	    printf(", with a timestamp (dd/mm/yyyy) >= %d/%d/%d\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
-	else
-	    printf("\n");
+	// lista
+	if(bQuickList)
+	{
+		printf("listing files with a timestamp (dd/mm/yyyy) >= %d/%d/%d\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
+	}
+	else // copia
+	{
+		printf("copying newer files from %s to %s",lpcszInputDir,lpcszOutputDir);
+		if(bQuickCopy)
+			printf(", with a timestamp (dd/mm/yyyy) >= %d/%d/%d\n",dateTime.GetDay(),dateTime.GetMonth(),dateTime.GetYear());
+		else
+			printf("\n");
+	}
+
+	// stampa le esclusioni
 	printf("exclusions: ");
 	if(pitemListExl)
 	{
@@ -558,63 +611,73 @@ int main(int argc,char* argv[])
 		printf("none\n");
 
 	DWORD dwTot = 0L;
-	DWORD dwRet = CopyDirectory(lpcszInputDir,
-								lpcszOutputDir,
-								bRecursiveyCopy,
-								&wildCards,
-								bMatchWhole,
-								nCopiedFiles,
-								nUnchangedFiles,
-								nExcludedFiles,
-								bShowExcluded,
-								dateTime,
-								dwTot);
+	DWORD dwRet = 0L;
 
+	// lista/copia
+	dwRet = DTCopy	(bQuickList ? DTCOPY_LIST : DTCOPY_COPY,
+					lpcszInputDir,
+					lpcszOutputDir,
+					bRecursiveyCopy,
+					&wildCards,
+					bMatchWhole,
+					nCopiedFiles,
+					nUnchangedFiles,
+					nExcludedFiles,
+					bShowExcluded,
+					dateTime,
+					dwTot);
 
 	printf("\r%*s\rfiles/directories analized: %ld\n",GetConsoleWidth()-1," ",dwTot);
-	printf("files copied: %d\n",nCopiedFiles);
+	printf("%s: %d\n",bQuickList ? "modified files" : "files copied",nCopiedFiles);
 	printf("unchanged files: %d\n",nUnchangedFiles);
 	printf("excluded files/directories: %d\n",nExcludedFiles);
 
 	if(dwRet!=NO_ERROR)
 	{
-		printf("found error(s) while copying, press any key to continue...");
+		printf("found error(s) while %s files, press any key to continue...",bQuickList ? "listing" : "copying");
 		Beep(1000,300);
 		getch();
 		printf("\n");
 	}
 
+	// spazio disponibile su disco
 	char szInputDrive[5] = {0};
 	char szOutputDrive[5] = {0};
 	DISKINFO di = {0};
-	if(GetDriveFromPath(opts[GETOPT_s].uValue.szValue,szInputDrive,sizeof(szInputDrive))==1)
-	{
-		if(GetDiskInfo(szInputDrive,&di))
+	if(*(opts[GETOPT_s].uValue.szValue))
+		if(GetDriveFromPath(opts[GETOPT_s].uValue.szValue,szInputDrive,sizeof(szInputDrive))==1)
 		{
-			char szDiskSize[32] = {0};
-			char szFreeSpace[32] = {0};
-			strsizefmt(szDiskSize,sizeof(szDiskSize),(double)di.totalBytes);
-			strsizefmt(szFreeSpace,sizeof(szFreeSpace),(double)di.freeBytes);
-			printf("%s of free space on drive %s (%s total capacity)\n",szFreeSpace,szInputDrive,szDiskSize);
+			if(GetDiskInfo(szInputDrive,&di))
+			{
+				char szDiskSize[32] = {0};
+				char szFreeSpace[32] = {0};
+				strsizefmt(szDiskSize,sizeof(szDiskSize),(double)di.totalBytes);
+				strsizefmt(szFreeSpace,sizeof(szFreeSpace),(double)di.freeBytes);
+				printf("%s of free space on drive %s (%s total capacity)\n",szFreeSpace,szInputDrive,szDiskSize);
 
-			if(GetDriveFromPath(opts[GETOPT_d].uValue.szValue,szOutputDrive,sizeof(szOutputDrive))==1)
-				if(strcmp(szInputDrive,szOutputDrive)!=0)
-				{
-					memset(&di,'\0',sizeof(di));
-					if(GetDiskInfo(szOutputDrive,&di))
-					{
-						strsizefmt(szDiskSize,sizeof(szDiskSize),(double)di.totalBytes);
-						strsizefmt(szFreeSpace,sizeof(szFreeSpace),(double)di.freeBytes);
-						printf("%s of free space on drive %s (%s total capacity)\n",szFreeSpace,szOutputDrive,szDiskSize);
-					}
-				}
+				if(*(opts[GETOPT_d].uValue.szValue))
+					if(GetDriveFromPath(opts[GETOPT_d].uValue.szValue,szOutputDrive,sizeof(szOutputDrive))==1)
+						if(strcmp(szInputDrive,szOutputDrive)!=0)
+						{
+							memset(&di,'\0',sizeof(di));
+							if(GetDiskInfo(szOutputDrive,&di))
+							{
+								strsizefmt(szDiskSize,sizeof(szDiskSize),(double)di.totalBytes);
+								strsizefmt(szFreeSpace,sizeof(szFreeSpace),(double)di.freeBytes);
+								printf("%s of free space on drive %s (%s total capacity)\n",szFreeSpace,szOutputDrive,szDiskSize);
+							}
+						}
+			}
 		}
-	}
 
 #ifndef DEBUG
 	// Ta Da!
 	PlayEmbeddedWave(IDR_WAVE1);
 #endif
+
+	// il versionamento solo ha senso con la copia, non per l'elenco
+	if(bQuickList)
+		return(0);
 
 /*- VERSIONAMENTO ----------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 
@@ -738,26 +801,27 @@ int main(int argc,char* argv[])
 		printf("\nversioning concluded %s\n",nRet==GZW_SUCCESS ? "successfully" : "with errors");
 	}
 
-    return(0);
+	return(0);
 }
 
 /*
-	CopyDirectory()
+	DTCopy()
 
-	Copia (ricorsivamente) la directory sorgente su quella di destinazione.
+	Copia/elenca (ricorsivamente) la directory sorgente (su quella di destinazione).
 */
-DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
-					LPCSTR		lpcsDstDir,
-					BOOL		bRecursiveyCopy,
-					CWildCards* pWildCards,
-					BOOL		bMatchWhole,
-					int&		nCopiedFiles,
-					int&		nUnchangedFiles,
-					int&		nExcludedFiles,
-					BOOL		bShowExcluded,
-					CDateTime&	dateTime,
-					DWORD&		dwTot
-					)
+DWORD DTCopy(	int			nAction,
+				LPCSTR		lpcszSrcDir,
+				LPCSTR		lpcsDstDir,
+				BOOL		bRecursiveyCopy,
+				CWildCards* pWildCards,
+				BOOL		bMatchWhole,
+				int&		nCopiedFiles,
+				int&		nUnchangedFiles,
+				int&		nExcludedFiles,
+				BOOL		bShowExcluded,
+				CDateTime&	dateTime,
+				DWORD&		dwTot
+				)
 {
 	// le static qui sotto perche' la funzione e' ricorsiva
 
@@ -840,30 +904,37 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 			// ...solo se e' stato specificata l'opzione -r
 			if(bRecursiveyCopy)
 			{
-				// verifica la directory di destinazione
-				if(!DoesDirectoryExist(szDstPath,&dwError))
+				if(nAction==DTCOPY_COPY)
 				{
-					if(!CreatePathname(szDstPath,&dwError))
+					// verifica la directory di destinazione
+					if(!DoesDirectoryExist(szDstPath,&dwError))
 					{
-						printf("\r%*s\r",wide+1," ");
-						wide = printf("\rerror: unable to create %s\n",szDstPath);
-
-						dwRet = ERROR_ACCESS_DENIED;
-						SetLastError(dwRet);
-						return(dwRet);
-					}
-					else
-					{
-						if(dwError!=ERROR_ALREADY_EXISTS)
+						if(!CreatePathname(szDstPath,&dwError))
 						{
 							printf("\r%*s\r",wide+1," ");
-							wide = printf("\rdirectory created %s\n",szDstPath);
+							wide = printf("\rerror: unable to create %s\n",szDstPath);
+
+							dwRet = ERROR_ACCESS_DENIED;
+							SetLastError(dwRet);
+							return(dwRet);
+						}
+						else
+						{
+							if(dwError!=ERROR_ALREADY_EXISTS)
+							{
+								printf("\r%*s\r",wide+1," ");
+								wide = printf("\rdirectory created %s\n",szDstPath);
+							}
 						}
 					}
-				}
 
-				CopyDirectory(szSrcPath,szDstPath,bRecursiveyCopy,pWildCards,bMatchWhole,nCopiedFiles,nUnchangedFiles,nExcludedFiles,bShowExcluded,dateTime,dwTot);
-			}
+					DTCopy(nAction,szSrcPath,szDstPath,bRecursiveyCopy,pWildCards,bMatchWhole,nCopiedFiles,nUnchangedFiles,nExcludedFiles,bShowExcluded,dateTime,dwTot);
+				}
+				else if(nAction==DTCOPY_LIST)
+				{
+					DTCopy(nAction,szSrcPath,szDstPath,bRecursiveyCopy,pWildCards,bMatchWhole,nCopiedFiles,nUnchangedFiles,nExcludedFiles,bShowExcluded,dateTime,dwTot);
+				}
+	        }
         }
 		else // e' un file, copia solo se e' piu' recente o se non esiste
 		{
@@ -881,41 +952,57 @@ DWORD CopyDirectory(LPCSTR		lpcszSrcDir,
 				bDoCopyFile = CompareFileTimebyName(szSrcPath,szDstPath);
 			}
 
-			if(bDoCopyFile)
+			if(nAction==DTCOPY_COPY)
 			{
-				//if(CopyFile(szSrcPath,szDstPath,FALSE))							// lento
-				if((dwError = CopyFileMapped(szSrcPath,szDstPath))==ERROR_SUCCESS)	// rapido
+				if(bDoCopyFile)
 				{
-					printf("\r%*s\r",wide+1," ");
-					wide = printf("\rcopied: %s\n",szDstPath);
-                    nCopiedFiles++;
-                }
-				else // copia fallita
-				{
-					if((dwRet = dwError)==ERROR_HANDLE_EOF) // CopyFileMapped() restituisce EOF per file a dimensione 0
+					//if(CopyFile(szSrcPath,szDstPath,FALSE))							// lento
+					if((dwError = CopyFileMapped(szSrcPath,szDstPath))==ERROR_SUCCESS)	// rapido
 					{
 						printf("\r%*s\r",wide+1," ");
-						wide = printf("\rwarning: file size is zero: %s\n",szSrcPath);
-
-						if((dwError = CopyFile(szSrcPath,szDstPath,FALSE))==0L) // copia il file a dimensione 0
+						wide = printf("\rcopied: %s\n",szDstPath);
+						nCopiedFiles++;
+					}
+					else // copia fallita
+					{
+						if((dwRet = dwError)==ERROR_HANDLE_EOF) // CopyFileMapped() restituisce EOF per file a dimensione 0
 						{
-							dwRet = ::GetLastError();
+							printf("\r%*s\r",wide+1," ");
+							wide = printf("\rwarning: file size is zero: %s\n",szSrcPath);
+
+							if((dwError = CopyFile(szSrcPath,szDstPath,FALSE))==0L) // copia il file a dimensione 0
+							{
+								dwRet = ::GetLastError();
+								printf("\r%*s\r",wide+1," ");
+								wide = printf("\rerror while copying: %s (%lu)\n",szSrcPath,dwRet);
+							}
+							else
+								dwRet = NO_ERROR;
+						}
+						else
+						{
 							printf("\r%*s\r",wide+1," ");
 							wide = printf("\rerror while copying: %s (%lu)\n",szSrcPath,dwRet);
 						}
-						else
-							dwRet = NO_ERROR;
 					}
-					else
-					{
-						printf("\r%*s\r",wide+1," ");
-						wide = printf("\rerror while copying: %s (%lu)\n",szSrcPath,dwRet);
-					}
-                }
+				}
+				else
+				{
+					nUnchangedFiles++;
+				}
 			}
-			else
+			else if(nAction==DTCOPY_LIST)
 			{
-				nUnchangedFiles++;
+				if(bDoCopyFile)
+				{
+					printf("\r%*s\r",wide+1," ");
+					wide = printf("\r%s\n",szSrcPath);
+					nCopiedFiles++;
+				}
+				else
+				{
+					nUnchangedFiles++;
+				}
 			}
 		}
 

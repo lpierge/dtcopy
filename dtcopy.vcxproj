@@ -61,7 +61,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GETOPT_CMD;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>L:\zLibdll\include</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -82,7 +82,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GETOPT_CMD;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_WINDOWS;_ZLIB_DLL;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>L:\zLibdll\include</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>

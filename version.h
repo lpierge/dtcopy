@@ -13,8 +13,8 @@
 	versione: <n>.<n>.<n>: <cambio architetturale/disegno/aggiunta funzionalita'>.<ampliazioni/riduzioni,revisioni>.<bugs,patches,etc>:
 */
 #define MAJOR_VERSION	2
-#define MINOR_VERSION	7
-#define PATCH_VERSION	5
+#define MINOR_VERSION	8
+#define PATCH_VERSION	0
 #define RELEASE_VERSION	0
 #define RELEASE_TYPE	"" /*"(beta)"*/
 
