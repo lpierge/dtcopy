@@ -4,7 +4,7 @@
 
 #define MyAppName "dtcopy"
 ; AGGIORNARE VERSIONE QUI! *****************************************************************************
-#define MyAppVersion "2.8.0"
+#define MyAppVersion "2.8.3"
 #define MyAppPublisher "Luca Piergentili"
 #define MyAppURL "https://github.com/lpierge/dtcopy"
 #define MyAppExeName "dtcopy.exe"
@@ -27,7 +27,7 @@ DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=C:\DEV\dtcopy\redist
 ; AGGIORNARE VERSIONE QUI! *****************************************************************************
-OutputBaseFilename=dtcopy-2.8.0
+OutputBaseFilename=dtcopy-2.8.3
 SetupIconFile=..\res\dtcopy.ico
 WizardImageFile=..\res\dtcopy_wizard.bmp
 WizardSmallImageFile=..\res\dtcopy_wizard_small.bmp
