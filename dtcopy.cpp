@@ -58,11 +58,7 @@ BOOL g_bInterrupted = FALSE;
 */
 int main(int argc,char* argv[])
 {
-	InitConsoleGeometry(1024,10240);
-
-	HWND hConsole = ::GetConsoleWindow();
-	::ShowWindow(hConsole,SW_MAXIMIZE);
-	::SetForegroundWindow(hConsole);
+	InitConsoleGeometry(1024,1024);
 
 	// imposta l'handler per il Ctrl+C
 	if(!SetConsoleCtrlHandler(CtrlHandler,TRUE))
@@ -181,7 +177,7 @@ int main(int argc,char* argv[])
 
 				C:\BIN\dtcopy -r -s"C:\DEV\dummy" -d"D:\DEV\VERSIONS" -x\.vs\;\Debug\;\Release\ -F -X -v1.0 -VC:\DEV
 		*/
-		printf(	"usage:\tdtcopy <-s<input>> <-d<output>> [options]\n\t"\
+		printf(	"usage:\t%s <-s<input>> <-d<output>> [options]\n\t"\
 				"<-s<input>>           source directory\n\t"\
 				"<-d<output>>          destination directory\n\t"\
 				"[-r]                  copy recursively\n\t"\
@@ -199,26 +195,27 @@ int main(int argc,char* argv[])
 				"[-l<filename>]        list the .gzw file content\n\t"\
 				"[-g<filename>]        extract the .gzw file to the destination directory\n\t"\
 				"[-h]                  this help\n\t"\
-				"\n\tnotes:"\
+				"\nnotes:"\
+	 			"\n\t- <...> means mandatory, while [...] means optional"\
 	 			"\n\t- 'skeleton' is used as a synonym for 'exact pattern' (with no wildcards),"\
 	 			"\n\t  while 'pattern' refers to a string that may contain wildcards"\
-	 			"\n\t- <...> means mandatory, while [...] means optional\n\t"\
-				"\n\tsamples:"\
 				"\n"\
-	 			"\n\tdtcopy -r -s\"C:\\DEV\" -d\"D:\\DEV\" -x.vs;Debug;Release -X -f"\
+				"\ncommand line samples:"\
+				"\n"\
+	 			"\n\t-r -s\"C:\\DEV\" -d\"D:\\DEV\" -x.vs;Debug;Release -X -f"\
 	 			"\n\t\tcopy recursively anything new from \"C:\\DEV\" to \"D:\\DEV\","\
 	 			"\n\t\texclude all files containing any of these substrings: \".vs\", \"Debug\", \"Release\""\
 	 			"\n\t\t(matching only the filename: -f option)"\
 	 			"\n\t\tand show excluded files"\
 				"\n"\
-	 			"\n\tdtcopy -r -s\"C:\\DEV\" -d\"D:\\DEV\" -x\\.vs\\;\\Debug\\;\\Release\\;*.exe;*.obj -X -F"\
+	 			"\n\t-r -s\"C:\\DEV\" -d\"D:\\DEV\" -x\\.vs\\;\\Debug\\;\\Release\\;*.exe;*.obj -X -F"\
 	 			"\n\t\tcopy recursively anything new from \"C:\\DEV\" to \"D:\\DEV\","\
 	 			"\n\t\texclude all directories containing any of these substrings: \".vs\", \"Debug\", \"Release\""\
 	 			"\n\t\tand exclude all files following these patterns: \"*.exe\", \"*.obj\""\
 	 			"\n\t\t(matching the whole pathname: -F option)"\
 	 			"\n\t\tand show excluded files"\
 				"\n"\
-	 			"\n\tdtcopy -r -s\"C:\\DEV\\dtcopy\" -d\"D:\\DEV\\VERSIONS\\dtcopy\" -x\\.vs\\;\\Debug\\;\\Release\\ -X -F -v2.5 -VL:\\Library;L:\\Include"\
+	 			"\n\t-r -s\"C:\\DEV\\dtcopy\" -d\"D:\\DEV\\VERSIONS\\dtcopy\" -x\\.vs\\;\\Debug\\;\\Release\\ -X -F -v2.5 -VL:\\Library;L:\\Include"\
 	 			"\n\t\tcopy recursively anything new from \"C:\\DEV\\dtcopy\" to \"D:\\DEV\\VERSIONS\\dtcopy"\
 	 			"\n\t\texclude all directories containing any of these substrings: \".vs\", \"Debug\", \"Release\""\
 	 			"\n\t\t(matching the whole pathname: -F option)"\
@@ -227,30 +224,30 @@ int main(int argc,char* argv[])
 				"\n\t\t(the dependencies of dtcopy)"\
 	 			"\n\t\tand show excluded files"\
 				"\n"\
-	 			"\n\tdtcopy -l\"D:\\DEV\\VERSIONS\\dtcopy\\dtcopy.2.5.gzw\""\
+	 			"\n\t-l\"D:\\DEV\\VERSIONS\\dtcopy\\dtcopy.2.5.gzw\""\
 	 			"\n\t\tlist the content of the .gzw file"\
 				"\n"\
-	 			"\n\tdtcopy -g\"D:\\DEV\\VERSIONS\\dtcopy\\dtcopy.2.5.gzw\" -d\"C:\\TMP\\dtcopy\""\
+	 			"\n\t-g\"D:\\DEV\\VERSIONS\\dtcopy\\dtcopy.2.5.gzw\" -d\"C:\\TMP\\dtcopy\""\
 	 			"\n\t\textract the content of the .gzw file into the \"C:\\TMP\\dtcopy\" directory"\
 				"\n"\
-	 			"\n\tdtcopy -r -s\"C:\\DEV\\dummy\" -d\"D:\\DEV\\VERSIONS\" -x\\.vs\\;\\Debug\\;\\Release\\ -F -X -v1.0 -VC:\\DEV"\
+	 			"\n\t-r -s\"C:\\DEV\\dummy\" -d\"D:\\DEV\\VERSIONS\" -x\\.vs\\;\\Debug\\;\\Release\\ -F -X -v1.0 -VC:\\DEV"\
 	 			"\n\t\tcreates a 'fake' copy (the folder C:\\DEV\\dummy contains a dummy file) in order to version the entire C:\\DEV directory,"\
 	 			"\n\t\tenabling a full backup of one folder (C:\\DEV) into a single .gzw output file (D:\\DEV\\VERSIONS\\DEV.1.0.gzw)"\
 				"\n"\
-	 			"\n\tdtcopy -q\"current\" -r -s\"C:\\DEV\" -d\"D:\\DEV\""\
+	 			"\n\t-q\"current\" -r -s\"C:\\DEV\" -d\"D:\\DEV\""\
 	 			"\n\t\trecursively copies from C:\\DEV to D:\\DEV only files modified today (-q option with \"current\" argument),"\
 				"\n\t\twithout comparing them against the date/time of the destination files."\
 				"\n"\
-	 			"\n\tdtcopy -q\"26/08/2025\" -r -s\"C:\\DEV\" -d\"D:\\DEV\""\
+	 			"\n\t-q\"26/08/2025\" -r -s\"C:\\DEV\" -d\"D:\\DEV\""\
 	 			"\n\t\trecursively copies from C:\\DEV to D:\\DEV only files modified starting from August 26, 2025 (-q option with \"dd/mm/yyyy\" argument),"\
 				"\n\t\twithout comparing them against the date/time of the destination files."\
-				"\n"
+				"\n",
+				VER_STR_PROGRAM_NAME
 				);
 
-        return(1);
+		return(1);
     }
 
-	int i = 0;
     LPCSTR lpcszInputDir = NULL;
     LPCSTR lpcszOutputDir = NULL;
 	CWildCards wildCards;
@@ -260,8 +257,6 @@ int main(int argc,char* argv[])
 	BOOL bMatchWhole = FALSE;
 	char szDirectoriesToBeVersioned[STR_MAX_VALUE+1] = {0}; // stesso limite di: opts[GETOPT_V].uValue.szValue
 	CDateTime dateTime;
-	dateTime.SetDate();
-	dateTime.SetTime();
 
 	// -l<...>
 	// lista il file .gzw e termina
@@ -271,7 +266,7 @@ int main(int argc,char* argv[])
 		if(!*opts[GETOPT_l].uValue.szValue)
 		{
 			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_l].cOpt);
-	        return(1);
+			return(1);
 		}
 		// controlla che il file .gzw esista
 		char szGzwName[_MAX_FILEPATH+1] = {0};
@@ -279,7 +274,7 @@ int main(int argc,char* argv[])
 		if(!FileExists(szGzwName))
 		{
 			printf("error: no such file: %s\n",szGzwName);
-	        return(1);
+			return(1);
 		}
 		// visualizza il contenuto del file .gzw
 		FPGZWCALLBACK pGzwCallback = GzwCallback;
@@ -300,19 +295,19 @@ int main(int argc,char* argv[])
 		if(!*opts[GETOPT_g].uValue.szValue)
 		{
 			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_g].cOpt);
-	        return(1);
+			return(1);
 		}
 		// controlla che venga specificata la directory in cui estrarre
 		if(!*opts[GETOPT_d].uValue.szValue)
 		{
 			printf("error: you must specify a destination directory to extract the file\n");
-	        return(1);
+			return(1);
 		}
 		DWORD dwError = 0L;
 		if(DoesFileExist(opts[GETOPT_d].uValue.szValue,&dwError))
 		{
 			printf("error: you cannot specify a file as a destination to extract the file\n");
-	        return(1);
+			return(1);
 		}
 		// controlla che il file .gzw esista
 		char szGzwName[_MAX_FILEPATH+1] = {0};
@@ -320,7 +315,7 @@ int main(int argc,char* argv[])
 		if(!FileExists(szGzwName))
 		{
 			printf("error: no such file: %s\n",szGzwName);
-	        return(1);
+			return(1);
 		}
 		// estrae il file .gzw ricreando il pathname relativo sulla directory di destinazione
 		FPGZWCALLBACK pGzwCallback = GzwCallback;
@@ -362,7 +357,7 @@ int main(int argc,char* argv[])
 			return(1);
 		}
 		// normalizza la directory sorgente, NON deve terminare con '\'
-		i = strlen(opts[GETOPT_s].uValue.szValue)-1;
+		int i = strlen(opts[GETOPT_s].uValue.szValue)-1;
 		if(opts[GETOPT_s].uValue.szValue[i]=='\\')
 			opts[GETOPT_s].uValue.szValue[i] = '\0';
 		// controlla che la directory sorgente esista
@@ -394,7 +389,7 @@ int main(int argc,char* argv[])
 			return(1);
 		}
 		// normalizza la directory di destinazione, NON deve terminare con '\'
-		i = strlen(opts[GETOPT_d].uValue.szValue)-1;
+		int i = strlen(opts[GETOPT_d].uValue.szValue)-1;
 		if(opts[GETOPT_d].uValue.szValue[i]=='\\')
 			opts[GETOPT_d].uValue.szValue[i] = '\0';
 		// crea la directory di destinazione
@@ -431,7 +426,7 @@ int main(int argc,char* argv[])
 		if(!*opts[GETOPT_x].uValue.szValue)
 		{
 			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_x].cOpt);
-	        return(1);
+			return(1);
 		}
 		else
 		{
@@ -441,6 +436,8 @@ int main(int argc,char* argv[])
     
 	// -q<dd/mm/yy|current>
 	// solo copia i files modificati a partire dalla data specificata (nel formato dd/mm/yy) o corrente
+	// se il flag non viene specificato, l'oggetto per la data viene impostato sulla data Unix Epoch,
+	// semplicemente per non tenere che passare un parametro ulteriore alla funzione di copia
 	BOOL bQuickCopy = FALSE;
     if(opts[GETOPT_q].bFound)
 	{
@@ -471,8 +468,13 @@ int main(int argc,char* argv[])
 		else
 		{
 			printf("error: you must specify a valid date for the copy\n");
-		    return(1);
+			return(1);
 		}
+	}
+	else
+	{
+		dateTime.SetDate(-1,1,12,1970);
+		dateTime.SetTime(0,0,0);
 	}
     
 	// -Q<dd/mm/yy|current>
@@ -507,7 +509,7 @@ int main(int argc,char* argv[])
 		else
 		{
 			printf("error: you must specify a valid date for the listing\n");
-		    return(1);
+			return(1);
 		}
 	}
 
@@ -532,7 +534,7 @@ int main(int argc,char* argv[])
 		if(!*opts[GETOPT_y].uValue.szValue)
 		{
 			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_y].cOpt);
-	        return(1);
+			return(1);
 		}
 	}
 	else
@@ -549,7 +551,7 @@ int main(int argc,char* argv[])
 		if(!*opts[GETOPT_v].uValue.szValue)
 		{
 			printf("error: the -%c option requires a valid argument, use -h for help\n",opts[GETOPT_v].cOpt);
-	        return(1);
+			return(1);
 		}
 		else
 			strcpyn(szVersion,opts[GETOPT_v].uValue.szValue,sizeof(szVersion));
@@ -646,7 +648,6 @@ int main(int argc,char* argv[])
 	DISKINFO di = {0};
 	if(*(opts[GETOPT_s].uValue.szValue))
 		if(GetDriveFromPath(opts[GETOPT_s].uValue.szValue,szInputDrive,sizeof(szInputDrive))==1)
-		{
 			if(GetDiskInfo(szInputDrive,&di))
 			{
 				char szDiskSize[32] = {0};
@@ -668,8 +669,7 @@ int main(int argc,char* argv[])
 							}
 						}
 			}
-		}
-
+	
 #ifndef DEBUG
 	// Ta Da!
 	PlayEmbeddedWave(IDR_WAVE1);
@@ -801,6 +801,8 @@ int main(int argc,char* argv[])
 		printf("\nversioning concluded %s\n",nRet==GZW_SUCCESS ? "successfully" : "with errors");
 	}
 
+	ScrollConsoleToBottom();
+
 	return(0);
 }
 
@@ -808,6 +810,7 @@ int main(int argc,char* argv[])
 	DTCopy()
 
 	Copia/elenca (ricorsivamente) la directory sorgente (su quella di destinazione).
+	Per -q da cmd, solo controlla se la data sorgente >= data specificata, non contro destinazione.
 */
 DWORD DTCopy(	int			nAction,
 				LPCSTR		lpcszSrcDir,
@@ -823,23 +826,25 @@ DWORD DTCopy(	int			nAction,
 				DWORD&		dwTot
 				)
 {
-	// le static qui sotto perche' la funzione e' ricorsiva
+	TERN tQuickMode = Undef;
+	SYSTEMTIME systemTime = {0};
+	FILETIME fileTimeLocal = {0};
+	FILETIME fileTimeUTC = {0};
 
-	// per -q da cmd, solo controlla se la data sorgente >= data specificata, non contro destinazione
-	static TERN tQuickMode = Undef;
-	static SYSTEMTIME systemTime = {0};
-	static FILETIME fileTime = {0};
-	if(tQuickMode==Undef)
-	{
-		tQuickMode = (dateTime.GetDay()==26 && dateTime.GetMonth()==8 && dateTime.GetYear()==1965) ? False : True;
-		if(tQuickMode==True)
-		{
-			systemTime.wDay = dateTime.GetDay();
-			systemTime.wMonth = dateTime.GetMonth();
-			systemTime.wYear = dateTime.GetYear();
-		}
-		::SystemTimeToFileTime(&systemTime,&fileTime);
-	}
+	// se la data viene impostata su Unix Epoch, NON e' stata specificata l'opzione -q
+	if(dateTime.GetDay()==1 && dateTime.GetMonth()==12 && dateTime.GetYear()==1970)
+		tQuickMode = False;
+	else
+		tQuickMode = True;
+
+	systemTime.wDay   = dateTime.GetDay();
+	systemTime.wMonth = dateTime.GetMonth();
+	systemTime.wYear  = dateTime.GetYear();
+
+	// GetFileTime(), usata da CompareFilebyDate() piu' sotto, restituisce il timestamp in formato UTC, quindi la data 
+	// corrente/specificata, che e' locale, deve essere convertita a UTC
+	::SystemTimeToFileTime(&systemTime,&fileTimeLocal);		// converte SYSTEMTIME in FILETIME (considerato "locale")
+	::LocalFileTimeToFileTime(&fileTimeLocal,&fileTimeUTC);	// converte FILETIME locale in UTC
 
 	// per tenere traccia di eventuali errori
 	static DWORD dwRet = NO_ERROR;
@@ -943,7 +948,7 @@ DWORD DTCopy(	int			nAction,
 			{
 				// confronta la data del file (sorgente) con quella specificata in input (-q)
 				// copia per timestamp maggiore o uguale
-				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTime) >= 0;
+				bDoCopyFile = CompareFilebyDate(szSrcPath,&fileTimeUTC) >= 0;
 			}
 			else
 			{
